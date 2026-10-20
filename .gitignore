@@ -1,0 +1,19 @@
+# IntelliJ IDEA 本机配置（不是项目内容，换台电脑会重新生成）
+.idea/
+*.iml
+
+# Maven 编译产物
+target/
+out/
+
+# 本地覆盖配置：数据库密码、密钥等不要进仓库
+application-local.yml
+application-local.properties
+
+# 上传的图片、日志
+uploads/
+*.log
+
+# 操作系统杂项
+.DS_Store
+Thumbs.db
