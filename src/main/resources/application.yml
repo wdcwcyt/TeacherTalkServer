@@ -1,0 +1,47 @@
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+
+spring:
+  application:
+    name: teachertalk-server
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/teachertalk?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:teachertalk_app}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    serialization:
+      write-dates-as-timestamps: false
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+
+app:
+  # 仅显式启用 local Profile 时使用；客户端不能通过请求参数覆盖该用户。
+  local-user-id: ${DEV_USER_ID:1}
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration-seconds: 604800
+  aliyun:
+    sms:
+      access-key-id: ${ALIYUN_ACCESS_KEY_ID}
+      access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET}
+      endpoint: ${ALIYUN_SMS_ENDPOINT:dypnsapi.aliyuncs.com}
+      region-id: ${ALIYUN_SMS_REGION_ID:cn-hangzhou}
+      sign-name: ${ALIYUN_SMS_SIGN_NAME}
+      template-code: ${ALIYUN_SMS_TEMPLATE_CODE}
+      template-param: ${ALIYUN_SMS_TEMPLATE_PARAM}
+      scheme-name: ${ALIYUN_SMS_SCHEME_NAME:}
+      code-length: 6
+      valid-time-seconds: 300
+      resend-interval-seconds: 60
+      duplicate-policy: 1
+      code-type: 1
