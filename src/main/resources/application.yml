@@ -12,6 +12,10 @@ spring:
     username: ${DB_USERNAME:teachertalk_app}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 3MB
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: Asia/Shanghai
@@ -19,6 +23,7 @@ spring:
       write-dates-as-timestamps: false
 
 mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
   configuration:
     map-underscore-to-camel-case: true
   global-config:
@@ -27,6 +32,11 @@ mybatis-plus:
 app:
   # 仅显式启用 local Profile 时使用；客户端不能通过请求参数覆盖该用户。
   local-user-id: ${DEV_USER_ID:1}
+  upload:
+    directory: ${UPLOAD_DIR:uploads}
+    max-image-size: 2MB
+    thumbnail-size: 480
+    max-source-dimension: 4096
   jwt:
     secret: ${JWT_SECRET}
     expiration-seconds: 604800

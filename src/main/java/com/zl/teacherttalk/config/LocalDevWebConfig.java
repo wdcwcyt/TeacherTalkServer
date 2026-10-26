@@ -19,6 +19,11 @@ public class LocalDevWebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localDevUserInterceptor)
-                .addPathPatterns("/api/posts", "/api/posts/**", "/api/auth/me");
+                .addPathPatterns(
+                        "/api/posts",
+                        "/api/posts/**",
+                        "/api/files",
+                        "/api/auth/me"
+                );
     }
 }

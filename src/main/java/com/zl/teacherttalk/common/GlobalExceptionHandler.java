@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
@@ -61,6 +64,26 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Result<Void>> handleBadRequest(Exception exception) {
         log.warn("请求参数异常: type={}", exception.getClass().getSimpleName());
         return buildResponse(ErrorCode.BAD_REQUEST, ErrorCode.BAD_REQUEST.getMessage());
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<Result<Void>> handleMissingRequestPart(
+            MissingServletRequestPartException exception) {
+        log.warn("缺少上传文件字段: partName={}", exception.getRequestPartName());
+        return buildResponse(ErrorCode.BAD_REQUEST, "请选择要上传的图片");
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<Result<Void>> handleMaxUploadSizeExceeded(
+            MaxUploadSizeExceededException exception) {
+        log.warn("上传文件超过大小限制");
+        return buildResponse(ErrorCode.BAD_REQUEST, "图片不能超过 2MB");
+    }
+
+    @ExceptionHandler(MultipartException.class)
+    public ResponseEntity<Result<Void>> handleMultipartException(MultipartException exception) {
+        log.warn("上传请求解析失败: type={}", exception.getClass().getSimpleName());
+        return buildResponse(ErrorCode.BAD_REQUEST, "上传请求不合法");
     }
 
     @ExceptionHandler(NoResourceFoundException.class)

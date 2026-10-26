@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zl.teacherttalk.mapper.PostMapper">
+
+    <select id="countPosts" resultType="long">
+        SELECT COUNT(*)
+        FROM `post`
+    </select>
+
+    <select id="selectPostPage"
+            resultType="com.zl.teacherttalk.dto.PostListRow">
+        SELECT p.id,
+               p.title,
+               LEFT(p.content, 200) AS content_preview,
+               u.id                 AS author_id,
+               u.nickname           AS author_nickname,
+               u.avatar_url         AS author_avatar_url,
+               p.like_count,
+               p.favorite_count,
+               p.comment_count,
+               EXISTS(
+                   SELECT 1
+                   FROM post_like pl
+                   WHERE pl.post_id = p.id
+                     AND pl.user_id = #{currentUserId}
+               )                    AS liked,
+               EXISTS(
+                   SELECT 1
+                   FROM post_favorite pf
+                   WHERE pf.post_id = p.id
+                     AND pf.user_id = #{currentUserId}
+               )                    AS favorited,
+               p.created_at
+        FROM post p
+                 INNER JOIN `user` u ON u.id = p.user_id
+        ORDER BY p.created_at DESC, p.id DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="selectPostThumbnails"
+            resultType="com.zl.teacherttalk.dto.PostThumbnailRow">
+        SELECT ranked.post_id,
+               ranked.url,
+               ranked.sort_order
+        FROM (
+            SELECT pi.post_id,
+                   pi.url,
+                   pi.sort_order,
+                   ROW_NUMBER() OVER (
+                       PARTITION BY pi.post_id
+                       ORDER BY pi.sort_order ASC
+                   ) AS rn
+            FROM post_image pi
+            WHERE pi.post_id IN
+            <foreach collection="postIds" item="postId" open="(" separator="," close=")">
+                #{postId}
+            </foreach>
+        ) ranked
+        WHERE ranked.rn &lt;= 3
+        ORDER BY ranked.post_id ASC, ranked.sort_order ASC
+    </select>
+</mapper>
